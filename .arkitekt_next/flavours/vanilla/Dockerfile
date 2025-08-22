@@ -1,12 +1,12 @@
 FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openjdk-17-jre-headless \
+    openjdk-21-jre \
     curl \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 ENV MAVEN_VERSION=3.9.11
@@ -32,7 +32,7 @@ RUN pip install --no-cache-dir \
     "bioio-bioformats" \
     "bioio-lif" \
     "bioio-nd2" \
-    "arkitekt-next[all]>=0.21"
+    "arkitekt-next[all]>=0.24"
 
 # Copy and run your test script
 COPY test.tiff z.py /tmp/

@@ -1,106 +1,6 @@
 builds:
-- build_id: 50c45a3c-8200-4224-a6b5-29d26cc067f7
-  build_run: 871abd73-b034-4185-b012-35ff89376a62
-  description: This is a vanilla flavour
-  flavour: vanilla
-  inspection:
-    implementations:
-    - definition:
-        args:
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          effects: []
-          identifier: '@mikro/file'
-          key: file
-          kind: STRUCTURE
-          label: file
-          nullable: false
-          validators: []
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          effects: []
-          identifier: '@mikro/stage'
-          key: stage
-          kind: STRUCTURE
-          label: stage
-          nullable: true
-          validators: []
-        collections: []
-        description: Converts an Omero File in a set of Mikrodata
-        interfaces: []
-        isDev: false
-        isTestFor: []
-        kind: FUNCTION
-        logo: ome.png
-        name: Convert Omero
-        portGroups: []
-        returns:
-        - children:
-          - assignWidget:
-              kind: SEARCH
-              query: "query SearchImages($search: String, $values: [ID!]) {\n  options:\
-                \ images(\n    filters: {name: {contains: $search}, ids: $values}\n\
-                \    pagination: {limit: 10}\n  ) {\n    value: id\n    label: name\n\
-                \    __typename\n  }\n}"
-              ward: mikro
-            effects: []
-            identifier: '@mikro/image'
-            key: '...'
-            kind: STRUCTURE
-            nullable: false
-            validators: []
-          description: The created series in this file
-          effects: []
-          key: return0
-          kind: LIST
-          label: return0
-          nullable: false
-          validators: []
-        stateful: false
-      dependencies: []
-      dynamic: false
-      interface: convert_omero_file
-      logo: ome.png
-    requirements:
-    - description: An instance of ArkitektNext Datalayer to make requests to the user's
-        data
-      key: datalayer
-      optional: true
-      service: live.arkitekt.s3
-    - description: An instance of ArkitektNext Lok to authenticate the user
-      key: lok
-      optional: false
-      service: live.arkitekt.lok
-    - description: An instance of ArkitektNext Mikro to make requests to the user's
-        data
-      key: mikro
-      optional: true
-      service: live.arkitekt.mikro
-    - description: An instance of ArkitektNext Rekuest to assign to actions
-      key: rekuest
-      optional: false
-      service: live.arkitekt.rekuest
-    size: 1224282273
-  manifest:
-    author: jhnnsrs
-    entrypoint: app
-    identifier: ome
-    scopes:
-    - read
-    version: 0.1.6
-  selectors: []
-- build_id: 60aac013-3647-46ac-96b8-26f9522ba162
-  build_run: 14725943-b5f3-4425-9517-27ea30bc47cf
+- build_id: 85b56019-2519-43cc-8552-7b8e235457bb
+  build_run: 694e7384-dd1c-41e1-b197-7a9aa3768de9
   description: This is a vanilla flavour
   flavour: vanilla
   inspection:
@@ -192,313 +92,7 @@ builds:
       key: rekuest
       optional: false
       service: live.arkitekt.rekuest
-    size: 1235838890
-  manifest:
-    author: jhnnsrs
-    entrypoint: app
-    identifier: ome
-    scopes:
-    - read
-    version: 0.1.6
-  selectors: []
-- build_id: 6b47b218-5c7e-4725-9b80-9390335eb276
-  build_run: 7c15864f-aacb-4049-8cea-0f1ca68f029a
-  description: This is a vanilla flavour
-  flavour: vanilla
-  inspection:
-    implementations:
-    - definition:
-        args:
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          description: The File to be converted
-          effects: []
-          identifier: '@mikro/file'
-          key: file
-          kind: STRUCTURE
-          label: file
-          nullable: false
-          validators: []
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          description: The Stage in which to put the Image. Defaults to None.
-          effects: []
-          identifier: '@mikro/stage'
-          key: stage
-          kind: STRUCTURE
-          label: stage
-          nullable: true
-          validators: []
-        collections: []
-        description: Converts an Omero File in a set of Mikrodata
-        interfaces: []
-        isDev: false
-        isTestFor: []
-        kind: FUNCTION
-        logo: ome.png
-        name: Convert Omero
-        portGroups: []
-        returns:
-        - children:
-          - assignWidget:
-              kind: SEARCH
-              query: "query SearchImages($search: String, $values: [ID!]) {\n  options:\
-                \ images(\n    filters: {name: {contains: $search}, ids: $values}\n\
-                \    pagination: {limit: 10}\n  ) {\n    value: id\n    label: name\n\
-                \    __typename\n  }\n}"
-              ward: mikro
-            effects: []
-            identifier: '@mikro/image'
-            key: '...'
-            kind: STRUCTURE
-            nullable: false
-            validators: []
-          description: The created series in this file
-          effects: []
-          key: return0
-          kind: LIST
-          label: return0
-          nullable: false
-          validators: []
-        stateful: false
-      dependencies: []
-      dynamic: false
-      interface: convert_omero_file
-      logo: ome.png
-    requirements:
-    - description: An instance of ArkitektNext Datalayer to make requests to the user's
-        data
-      key: datalayer
-      optional: true
-      service: live.arkitekt.s3
-    - description: An instance of ArkitektNext Lok to authenticate the user
-      key: lok
-      optional: false
-      service: live.arkitekt.lok
-    - description: An instance of ArkitektNext Mikro to make requests to the user's
-        data
-      key: mikro
-      optional: true
-      service: live.arkitekt.mikro
-    - description: An instance of ArkitektNext Rekuest to assign to actions
-      key: rekuest
-      optional: false
-      service: live.arkitekt.rekuest
-    size: 1235842356
-  manifest:
-    author: jhnnsrs
-    entrypoint: app
-    identifier: ome
-    scopes:
-    - read
-    version: 0.1.7
-  selectors: []
-- build_id: df750bd8-4d76-4a0b-91c5-bd48d781a3a2
-  build_run: 8e55bdeb-b3e2-4be1-b8c7-ce58cc9fbf09
-  description: This is a vanilla flavour
-  flavour: vanilla
-  inspection:
-    implementations:
-    - definition:
-        args:
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          description: The File to be converted
-          effects: []
-          identifier: '@mikro/file'
-          key: file
-          kind: STRUCTURE
-          label: file
-          nullable: false
-          validators: []
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          description: The Stage in which to put the Image. Defaults to None.
-          effects: []
-          identifier: '@mikro/stage'
-          key: stage
-          kind: STRUCTURE
-          label: stage
-          nullable: true
-          validators: []
-        collections: []
-        description: Converts an Omero File in a set of Mikrodata
-        interfaces: []
-        isDev: false
-        isTestFor: []
-        kind: FUNCTION
-        logo: ome.png
-        name: Convert Omero
-        portGroups: []
-        returns:
-        - children:
-          - assignWidget:
-              kind: SEARCH
-              query: "query SearchImages($search: String, $values: [ID!]) {\n  options:\
-                \ images(\n    filters: {name: {contains: $search}, ids: $values}\n\
-                \    pagination: {limit: 10}\n  ) {\n    value: id\n    label: name\n\
-                \    __typename\n  }\n}"
-              ward: mikro
-            effects: []
-            identifier: '@mikro/image'
-            key: '...'
-            kind: STRUCTURE
-            nullable: false
-            validators: []
-          description: The created series in this file
-          effects: []
-          key: return0
-          kind: LIST
-          label: return0
-          nullable: false
-          validators: []
-        stateful: false
-      dependencies: []
-      dynamic: false
-      interface: convert_omero_file
-      logo: ome.png
-    requirements:
-    - description: An instance of ArkitektNext Datalayer to make requests to the user's
-        data
-      key: datalayer
-      optional: true
-      service: live.arkitekt.s3
-    - description: An instance of ArkitektNext Lok to authenticate the user
-      key: lok
-      optional: false
-      service: live.arkitekt.lok
-    - description: An instance of ArkitektNext Mikro to make requests to the user's
-        data
-      key: mikro
-      optional: true
-      service: live.arkitekt.mikro
-    - description: An instance of ArkitektNext Rekuest to assign to actions
-      key: rekuest
-      optional: false
-      service: live.arkitekt.rekuest
-    size: 1235886467
-  manifest:
-    author: jhnnsrs
-    entrypoint: app
-    identifier: ome
-    scopes:
-    - read
-    version: 0.1.8
-  selectors: []
-- build_id: fd4e1255-40f9-4ed6-bcdf-0cb9680c18c7
-  build_run: bcc2cd40-06c5-4638-a1d2-5fc1cbc71df0
-  description: This is a vanilla flavour
-  flavour: vanilla
-  inspection:
-    implementations:
-    - definition:
-        args:
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          description: The File to be converted
-          effects: []
-          identifier: '@mikro/file'
-          key: file
-          kind: STRUCTURE
-          label: file
-          nullable: false
-          validators: []
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
-            ward: mikro
-          description: The Stage in which to put the Image. Defaults to None.
-          effects: []
-          identifier: '@mikro/stage'
-          key: stage
-          kind: STRUCTURE
-          label: stage
-          nullable: true
-          validators: []
-        collections: []
-        description: Converts an Omero File in a set of Mikrodata
-        interfaces: []
-        isDev: false
-        isTestFor: []
-        kind: FUNCTION
-        logo: ome.png
-        name: Convert Omero
-        portGroups: []
-        returns:
-        - children:
-          - assignWidget:
-              kind: SEARCH
-              query: "query SearchImages($search: String, $values: [ID!]) {\n  options:\
-                \ images(\n    filters: {name: {contains: $search}, ids: $values}\n\
-                \    pagination: {limit: 10}\n  ) {\n    value: id\n    label: name\n\
-                \    __typename\n  }\n}"
-              ward: mikro
-            effects: []
-            identifier: '@mikro/image'
-            key: '...'
-            kind: STRUCTURE
-            nullable: false
-            validators: []
-          description: The created series in this file
-          effects: []
-          key: return0
-          kind: LIST
-          label: return0
-          nullable: false
-          validators: []
-        stateful: false
-      dependencies: []
-      dynamic: false
-      interface: convert_omero_file
-      logo: ome.png
-    requirements:
-    - description: An instance of ArkitektNext Datalayer to make requests to the user's
-        data
-      key: datalayer
-      optional: true
-      service: live.arkitekt.s3
-    - description: An instance of ArkitektNext Lok to authenticate the user
-      key: lok
-      optional: false
-      service: live.arkitekt.lok
-    - description: An instance of ArkitektNext Mikro to make requests to the user's
-        data
-      key: mikro
-      optional: true
-      service: live.arkitekt.mikro
-    - description: An instance of ArkitektNext Rekuest to assign to actions
-      key: rekuest
-      optional: false
-      service: live.arkitekt.rekuest
-    size: 1235917002
+    size: 1482519256
   manifest:
     author: jhnnsrs
     entrypoint: app
@@ -507,4 +101,106 @@ builds:
     - read
     version: 0.1.9
   selectors: []
-latest_build_run: bcc2cd40-06c5-4638-a1d2-5fc1cbc71df0
+- build_id: 77aecb0e-6bd0-4e96-8a41-4a99ed7c0241
+  build_run: 74e77a02-39a2-4250-9213-4f20205c2720
+  description: This is a vanilla flavour
+  flavour: vanilla
+  inspection:
+    implementations:
+    - definition:
+        args:
+        - assignWidget:
+            kind: SEARCH
+            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
+              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
+              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
+              \ id\n    label: name\n    __typename\n  }\n}"
+            ward: mikro
+          description: The File to be converted
+          effects: []
+          identifier: '@mikro/file'
+          key: file
+          kind: STRUCTURE
+          label: file
+          nullable: false
+          validators: []
+        - assignWidget:
+            kind: SEARCH
+            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
+              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
+              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
+              \ id\n    label: name\n    __typename\n  }\n}"
+            ward: mikro
+          description: The Stage in which to put the Image. Defaults to None.
+          effects: []
+          identifier: '@mikro/stage'
+          key: stage
+          kind: STRUCTURE
+          label: stage
+          nullable: true
+          validators: []
+        collections: []
+        description: Converts an Omero File in a set of Mikrodata
+        interfaces: []
+        isDev: false
+        isTestFor: []
+        kind: FUNCTION
+        logo: ome.png
+        name: Convert Omero
+        portGroups: []
+        returns:
+        - children:
+          - assignWidget:
+              kind: SEARCH
+              query: "query SearchImages($search: String, $values: [ID!]) {\n  options:\
+                \ images(\n    filters: {name: {contains: $search}, ids: $values}\n\
+                \    pagination: {limit: 10}\n  ) {\n    value: id\n    label: name\n\
+                \    __typename\n  }\n}"
+              ward: mikro
+            effects: []
+            identifier: '@mikro/image'
+            key: '...'
+            kind: STRUCTURE
+            nullable: false
+            validators: []
+          description: The created series in this file
+          effects: []
+          key: return0
+          kind: LIST
+          label: return0
+          nullable: false
+          validators: []
+        stateful: false
+      dependencies: []
+      dynamic: false
+      interface: convert_omero_file
+      logo: ome.png
+    requirements:
+    - description: An instance of ArkitektNext Datalayer to make requests to the user's
+        data
+      key: datalayer
+      optional: true
+      service: live.arkitekt.s3
+    - description: An instance of ArkitektNext Lok to authenticate the user
+      key: lok
+      optional: false
+      service: live.arkitekt.lok
+    - description: An instance of ArkitektNext Mikro to make requests to the user's
+        data
+      key: mikro
+      optional: true
+      service: live.arkitekt.mikro
+    - description: An instance of ArkitektNext Rekuest to assign to actions
+      key: rekuest
+      optional: false
+      service: live.arkitekt.rekuest
+    size: 1482598149
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: ome
+    scopes:
+    - read
+    version: 0.1.9
+  selectors: []
+latest_build_run: 74e77a02-39a2-4250-9213-4f20205c2720
