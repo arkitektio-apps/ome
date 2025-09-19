@@ -21,7 +21,7 @@ import logging
 from scyjava import config
 from bioio import BioImage
 import numpy as np
-
+from ome_types.model import UnitsLength
 
 
 logger = logging.getLogger(__name__)
@@ -49,6 +49,21 @@ def load_as_xarray(image: BioImage, scene: int):
 
     x = xr.DataArray(image.data, dims=list("ctzyx"))
     return x
+
+
+
+def convert_float_to_correct_micrometer(x, unit: str):
+    if unit in ["micrometer", "micrometers", "µm", "um", UnitsLength.MICROMETER]:
+        return x 
+    elif unit in ["nanometer", "nanometers", "nm", UnitsLength.NANOMETER]:
+        return x / 1000
+    elif unit in ["mm", "millimeter", "millimeters", UnitsLength.MILLIMETER]:
+        return x * 1000
+    elif unit in ["m", "meter", "meters", UnitsLength.METER]:
+        return x * 1_000_000
+    else:
+        raise ValueError(f"Unknown unit: {unit}")
+
 
 
 @register(logo="ome.png")
@@ -151,6 +166,13 @@ def convert_omero_file(
             physical_size_x = pixels.physical_size_x if pixels.physical_size_x else 1
             physical_size_y = pixels.physical_size_y if pixels.physical_size_y else 1
             physical_size_z = pixels.physical_size_z if pixels.physical_size_z else 1
+            
+            corrected_physical_size_x = convert_float_to_correct_micrometer(physical_size_x, pixels.physical_size_x_unit) if pixels.physical_size_x else 1
+            corrected_physical_size_y = convert_float_to_correct_micrometer(physical_size_y, pixels.physical_size_y_unit) if pixels.physical_size_y else 1
+            corrected_physical_size_z = convert_float_to_correct_micrometer(physical_size_z, pixels.physical_size_z_unit) if pixels.physical_size_z else 1
+            
+            
+            
 
 
             rgb_views = []
@@ -192,20 +214,29 @@ def convert_omero_file(
 
             affine_matrix = np.array(
                 [
-                    [physical_size_x, 0, 0, 0],
-                    [0, physical_size_y, 0, 0],
-                    [0, 0, physical_size_z, 0],
+                    [corrected_physical_size_x, 0, 0, 0],
+                    [0, corrected_physical_size_y, 0, 0],
+                    [0, 0, corrected_physical_size_z, 0],
                     [0, 0, 0, 1],
                 ]
             )
 
             if len(pixels.planes) > 0:
                 first_plane = pixels.planes[0]
+                
+                position_x = first_plane.position_x if first_plane.position_x else 0
+                position_y = first_plane.position_y if first_plane.position_y else 0
+                position_z = first_plane.position_z if first_plane.position_z else 0
+                
+                corrected_position_x = convert_float_to_correct_micrometer(position_x, first_plane.position_x_unit) if position_x else 0
+                corrected_position_y = convert_float_to_correct_micrometer(position_y, first_plane.position_y_unit) if position_y else 0
+                corrected_position_z = convert_float_to_correct_micrometer(position_z, first_plane.position_z_unit) if position_z else 0
+                
 
                 # translate matrix
-                affine_matrix[0][3] = first_plane.position_x if first_plane.position_x else 0
-                affine_matrix[1][3] = first_plane.position_y if first_plane.position_y else 0
-                affine_matrix[2][3] = first_plane.position_z if first_plane.position_z else 0
+                affine_matrix[0][3] = corrected_position_x
+                affine_matrix[1][3] = corrected_position_y
+                affine_matrix[2][3] = corrected_position_z
 
             afine_matrix = affine_matrix.reshape((4, 4))
 
