@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional
+from typing import List, Optional, Generator
 import xarray as xr
 from arkitekt_next import register, easy, progress
 from mikro_next.api.schema import (
@@ -70,7 +70,7 @@ def convert_float_to_correct_micrometer(x, unit: str):
 def convert_omero_file(
     file: File,
     stage: Optional[Stage],
-) -> List[Image]:
+) -> Generator[Image, None, None]:
     """Convert Omero
 
     Converts an Omero File in a set of Mikrodata
@@ -264,7 +264,7 @@ def convert_omero_file(
 
 
             progress(percent_range[0], f"Uploading Scene {index+1}/{amount_images}")
-            created_image = from_array_like(
+            yield from_array_like(
                 array,
                 name=file.name + " - " + (image.name if image.name else f"({index})"),
                 tags=["converted"],
@@ -280,7 +280,6 @@ def convert_omero_file(
                 ]
             )
 
-            images.append(created_image)
     except Exception as e:
         raise e
     
@@ -288,7 +287,6 @@ def convert_omero_file(
         os.remove(f)
 
 
-    return images
 
 
 
