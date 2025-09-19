@@ -14,6 +14,14 @@ from mikro_next.api.schema import (
     PartialOpticsViewInput,
     PartialChannelViewInput,
     PartialFileViewInput,
+    PartialLightpathViewInput,
+    ElementKind,
+    LightpathGraphInput,
+    OpticalElementInput,
+    PortRole,
+    ChannelKind,
+    LightEdgeInput,
+    LightPortInput,
     
 )
 from bioio_bioformats.biofile import BioFile
@@ -21,7 +29,7 @@ import logging
 from scyjava import config
 from bioio import BioImage
 import numpy as np
-from ome_types.model import UnitsLength
+from ome_types.model import UnitsLength, Channel as OmeChannel, Image as OmeImage, OME
 
 
 logger = logging.getLogger(__name__)
@@ -53,6 +61,9 @@ def load_as_xarray(image: BioImage, scene: int):
 
 
 def convert_float_to_correct_micrometer(x, unit: str):
+    if unit in [UnitsLength.REFERENCEFRAME]:
+        return x
+    
     if unit in ["micrometer", "micrometers", "µm", "um", UnitsLength.MICROMETER]:
         return x 
     elif unit in ["nanometer", "nanometers", "nm", UnitsLength.NANOMETER]:
@@ -64,6 +75,399 @@ def convert_float_to_correct_micrometer(x, unit: str):
     else:
         raise ValueError(f"Unknown unit: {unit}")
 
+
+
+
+
+def create_light_graph(channel: OmeChannel, image: OmeImage, ome: OME) -> LightpathGraphInput | None:
+    
+    
+    instrument_ref = image.instrument_ref
+        
+        
+    found_instrument = [instrument for instrument in ome.instruments if instrument.id == instrument_ref.id]
+    if len(found_instrument) != 1:
+        print("Shitty format")
+        raise Exception("Could not find {instrument_ref.id}")
+
+    instrument = found_instrument[0]
+    
+    
+    detector_map: dict[str, OpticalElementInput] = {}
+    objective_map: dict[str, OpticalElementInput] = {}
+    filters_map: dict[str, OpticalElementInput] = {}
+    laser_map: dict[str, OpticalElementInput] = {}
+    
+    for detector in instrument.detectors:
+        
+        detector_map[detector.id] = OpticalElementInput(
+            id=detector.id,
+            kind=ElementKind.DETECTOR,
+            manufacturer=detector.manufacturer,
+            model=detector.model,
+            label=f"{detector.manufacturer} {detector.model}",
+            ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+            ]
+        )
+        
+        
+    for laser in instrument.lasers:
+        laser_map[laser.id] = OpticalElementInput(
+            id=laser.id,
+            kind=ElementKind.LASER,
+            manufacturer=laser.manufacturer,
+            model=laser.model,
+            label=f"{laser.manufacturer} {laser.model} {laser.wavelength}",
+            nominal_wavelength_nm=laser.wavelength,
+            ports=[
+                LightPortInput(
+                    id="out",
+                    name="Light Out",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+            ]
+        )
+        
+        
+    for objective in instrument.objectives:
+        
+        objective_map[objective.id] = OpticalElementInput(
+            id=objective.id,
+            kind=ElementKind.OBJECTIVE,
+            label=f"{objective.manufacturer} {objective.model}",
+            magnification=objective.nominal_magnification or objective.calibrated_magnification,
+            numericalAperture=objective.lens_na,
+            manufacturer=objective.manufacturer,
+            model=objective.model,
+            workingDistanceMm=objective.working_distance,
+            ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+                 LightPortInput(
+                    id="out",
+                    name="Light In",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            )
+        ]
+        )
+        
+        
+    for filter in instrument.filters:
+        
+        filters_map[filter.id] = OpticalElementInput(
+            id=filter.id,
+            kind=ElementKind.FILTER,
+            label=filter.manufacturer or filter.id,
+            manufacturer=objective.manufacturer,
+            model=objective.model,
+            ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+                 LightPortInput(
+                    id="out",
+                    name="Light In",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            )
+        ]
+        )
+        
+    # Contruct the actual graph
+    
+    light_sources = []
+
+    if channel.light_source_settings:
+        # We need to change that soomehow
+        pass
+    else:    
+        pass
+    
+    light_sources: list[OpticalElementInput] = list(laser_map.values())
+    
+    
+    if image.objective_settings:
+        objective = objective_map[image.objective_settings.id]
+        #TODO: Update overwriten settings here
+    else:
+        objective = OpticalElementInput(
+            id="pinhole",
+            kind=ElementKind.OBJECTIVE,
+            label="Unknown Objective", 
+            ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+                 LightPortInput(
+                    id="out",
+                    name="Light In",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            )
+        ]
+        ) 
+        # MAYBE dummy here?
+    
+       
+       
+    if channel.pinhole_size:
+        
+        pinhole = OpticalElementInput(
+            id="pinhole",
+            kind=ElementKind.PINHOLE,
+            diameterUm=channel.pinhole_size,
+            label="A pinhole",
+            #pinhole_size=channel.pinhole_size,
+            ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+                 LightPortInput(
+                    id="out",
+                    name="Light In",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            )
+        ]
+        )
+        
+    else:
+        pinhole = None
+        
+    
+    excitation_filters = []
+    emission_filters = []    
+        
+        
+    if channel.light_path:
+        for exc_filter_ref in channel.light_path.excitation_filters:
+            excitation_filters.append(filters_map[exc_filter_ref.id])
+            
+        for emi_filter_ref in channel.light_path.emission_filters:
+            emission_filters.append(filters_map[emi_filter_ref.id])
+            
+    
+    
+    if channel.detector_settings:
+        detector = detector_map[channel.detector_settings.id]
+        # TODO set the dector
+        
+        detector.model_config["frozen"] = False
+        if channel.detector_settings.gain is not None:
+            detector.gain = channel.detector_settings.gain
+        
+        
+    else:
+        detector = OpticalElementInput(
+            id="detector",
+            kind=ElementKind.DETECTOR,
+            label=" A default Detector",
+            ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+            ]
+        )
+        
+        
+        
+    
+     
+    edges = []
+    elements = []
+    
+    
+    id = 0
+    
+    
+    unifier =  OpticalElementInput(
+        id="unifier",
+        label="A unifier",
+        kind=ElementKind.MIRROR,
+        ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+                 LightPortInput(
+                    id="out",
+                    name="Light In",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            )
+        ]
+    )  
+    
+    
+    elements.append(unifier)
+     
+    
+    # Connect all light sources to unifier
+    for light_source in light_sources:
+        
+        elements.append(light_source)
+        edges.append(
+            LightEdgeInput(
+                id=str(id),
+                sourceElementId=light_source.id,
+                sourcePortId=light_source.ports[0].id,
+                targetElementId=unifier.id,
+                targetPortId=unifier.ports[0].id
+            )
+        )   
+        
+        id += 1
+        
+        
+    # Unifier to sequential exitation filters:
+    latest_connector = unifier
+    
+    
+    for ex_filter in excitation_filters:
+        
+        elements.append(ex_filter)
+        edges.append(
+            LightEdgeInput(
+                id=str(id),
+                sourceElementId=latest_connector.id,
+                sourcePortId=latest_connector.ports[1].id,
+                targetElementId=ex_filter.id,
+                targetPortId=ex_filter.ports[0].id
+            )
+        )
+        
+        latest_connector = ex_filter
+        id += 1
+        
+    # Unifier to objective 
+    
+    elements.append(objective)
+    edges.append(
+        LightEdgeInput(
+            id=str(id),
+            sourceElementId=latest_connector.id,
+            sourcePortId=latest_connector.ports[1].id,
+            targetElementId=objective.id,
+            targetPortId=objective.ports[0].id
+        )
+    )
+    id += 1
+    
+    sample =  OpticalElementInput(
+        id="sample",
+        label="The Sample",
+        kind=ElementKind.SAMPLE,
+        ports=[
+                LightPortInput(
+                    id="in",
+                    name="Light In",
+                    role=PortRole.INPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            ),
+                 LightPortInput(
+                    id="out",
+                    name="Light Out",
+                    role=PortRole.OUTPUT,
+                    channel=ChannelKind.FREE_SPACE,
+            )
+        ]
+    ) 
+    
+    elements.append(sample)
+    edges.append(
+        LightEdgeInput(
+            id=str(id),
+            sourceElementId=objective.id,
+            sourcePortId=objective.ports[1].id,
+            targetElementId=sample.id,
+            targetPortId=sample.ports[0].id
+        )
+    )  
+    
+    id += 1
+    
+    after_sample = sample
+    
+    
+    if pinhole:
+        elements.append(pinhole)
+        edges.append(
+            LightEdgeInput(
+                id=str(id),
+                sourceElementId=sample.id,
+                sourcePortId=sample.ports[1].id,
+                targetElementId=pinhole.id,
+                targetPortId=pinhole.ports[0].id
+            )
+        )  
+        id += 1
+        
+        after_sample = pinhole
+    
+    
+    # Unifier to sequential emission filters:
+    latest_em_filter_bank_connector = after_sample
+    
+    
+    for em_filter in emission_filters:
+        elements.append(em_filter)
+        edges.append(
+            LightEdgeInput(
+                id=str(id),
+                sourceElementId=latest_em_filter_bank_connector.id,
+                sourcePortId=latest_em_filter_bank_connector.ports[1].id,
+                targetElementId=em_filter.id,
+                targetPortId=em_filter.ports[0].id
+            )
+        )
+        id += 1
+        latest_em_filter_bank_connector = em_filter
+        
+    elements.append(detector) 
+    edges.append(
+        LightEdgeInput(
+                id=str(id),
+                sourceElementId=latest_em_filter_bank_connector.id,
+                sourcePortId=latest_em_filter_bank_connector.ports[1].id,
+                targetElementId=detector.id,
+                targetPortId=detector.ports[0].id
+            )
+    )
+    id += 1
+    
+    
+    return LightpathGraphInput(
+        elements=elements,
+        edges=edges
+    )
+    
+    
 
 
 @register(logo="ome.png")
@@ -107,6 +511,11 @@ def convert_omero_file(
         instrument_map = dict()
 
         stage = stage or create_stage(f"New Stage for {file.name}")
+        
+        
+        
+        
+        
 
         for instrument in meta.instruments:
             if instrument.id:
@@ -142,6 +551,9 @@ def convert_omero_file(
         for index, scene in enumerate(aics_image.scenes):
 
             image = meta.images[index]
+            
+            
+            
 
             percent_range = [start_percent[index], start_percent[index+1]] if index+1 < amount_images else [start_percent[index], 100]
 
@@ -178,6 +590,7 @@ def convert_omero_file(
             rgb_views = []
 
             channel_views = []
+            lightgraph_views =   []
 
         
 
@@ -206,6 +619,17 @@ def convert_omero_file(
                             cMax=channelindex+1,
                         )
                     )
+                    
+                    
+                graph = create_light_graph(channel, image, meta)
+                lightgraph_views.append(
+                    PartialLightpathViewInput(
+                        graph=graph,
+                        cMin=channelindex,
+                        cMax=channelindex+1,
+                    )
+                )
+                    
 
 
 
@@ -269,6 +693,7 @@ def convert_omero_file(
                 name=file.name + " - " + (image.name if image.name else f"({index})"),
                 tags=["converted"],
                 transformation_views=transformation_views,
+                lightpath_views=lightgraph_views,
                 optics_views=optics_views,
                 channel_views=channel_views,
                 rgb_views=rgb_views,
