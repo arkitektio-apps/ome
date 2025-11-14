@@ -83,12 +83,17 @@ def create_light_graph(channel: OmeChannel, image: OmeImage, ome: OME) -> Lightp
     
     
     instrument_ref = image.instrument_ref
+    
+    # Handle case where there is no instrument reference
+    if instrument_ref is None:
+        logger.warning(f"No instrument reference found for image {image.id}")
+        return None
         
         
     found_instrument = [instrument for instrument in ome.instruments if instrument.id == instrument_ref.id]
     if len(found_instrument) != 1:
-        print("Shitty format")
-        raise Exception("Could not find {instrument_ref.id}")
+        logger.warning(f"Could not find instrument with id {instrument_ref.id}")
+        return None
 
     instrument = found_instrument[0]
     
@@ -622,13 +627,14 @@ def convert_omero_file(
                     
                     
                 graph = create_light_graph(channel, image, meta)
-                lightgraph_views.append(
-                    PartialLightpathViewInput(
-                        graph=graph,
-                        cMin=channelindex,
-                        cMax=channelindex+1,
+                if graph is not None:
+                    lightgraph_views.append(
+                        PartialLightpathViewInput(
+                            graph=graph,
+                            cMin=channelindex,
+                            cMax=channelindex+1,
+                        )
                     )
-                )
                     
 
 
