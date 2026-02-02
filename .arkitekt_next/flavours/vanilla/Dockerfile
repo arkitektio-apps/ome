@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
-ENV MAVEN_VERSION=3.9.11
+ENV MAVEN_VERSION=3.9.12
 ENV MAVEN_HOME=/usr/share/maven
 ENV MAVEN_CONFIG="/root/.m2"
 ENV PATH="${MAVEN_HOME}/bin:$PATH"
