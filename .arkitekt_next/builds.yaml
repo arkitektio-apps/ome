@@ -1,98 +1,85 @@
 builds:
-- build_id: 51bbbcb1-ae81-449e-a5ce-2ba8f552921d
-  build_run: 5dc76f4a-cf74-4c43-a61f-7866607a12d8
+- build_id: 2984cc0f-3afa-44fa-b85f-ac1abdad7589
+  build_run: 57efec4e-1bd6-4481-932a-cecefceb90a8
   description: This is a vanilla flavour
   flavour: vanilla
   inspection:
     implementations:
     - definition:
         args:
-        - assignWidget:
+        - effects: []
+          identifier: '@mikro/file'
+          key: file
+          kind: STRUCTURE
+          nullable: false
+          validators: []
+          widget:
             kind: SEARCH
             query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
               \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
               \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
               \ id\n    label: name\n    __typename\n  }\n}"
             ward: mikro
-          description: The File to be converted
-          effects: []
-          identifier: '@mikro/file'
-          key: file
+        - effects: []
+          identifier: '@mikro/stage'
+          key: stage
           kind: STRUCTURE
-          label: file
-          nullable: false
+          nullable: true
           validators: []
-        - assignWidget:
+          widget:
             kind: SEARCH
             query: "query SearchStages($search: String, $values: [ID!], $pagination:\
               \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
               \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
               \ id\n    label: name\n    __typename\n  }\n}"
             ward: mikro
-          description: The Stage in which to put the Image. Defaults to None.
-          effects: []
-          identifier: '@mikro/stage'
-          key: stage
-          kind: STRUCTURE
-          label: stage
-          nullable: true
-          validators: []
         collections: []
-        description: Converts an Omero File in a set of Mikrodata
+        description: No Description
         interfaces: []
-        isDev: false
+        isDev: true
         isTestFor: []
+        key: convert_omero_file
         kind: GENERATOR
         logo: ome.png
-        name: Convert Omero
+        name: Convert Omero File
         portGroups: []
         returns:
-        - assignWidget:
-            kind: SEARCH
-            query: "query SearchImages($search: String, $values: [ID!]) {\n  options:\
-              \ images(\n    filters: {name: {contains: $search}, ids: $values}\n\
-              \    pagination: {limit: 10}\n  ) {\n    value: id\n    label: name\n\
-              \    __typename\n  }\n}"
-            ward: mikro
-          description: The created series in this file
-          effects: []
+        - effects: []
           identifier: '@mikro/image'
           key: return0
           kind: STRUCTURE
-          label: return0
           nullable: false
           validators: []
-        stateful: false
+        stateful: true
+        version: '1'
       dependencies: []
       dynamic: false
       interface: convert_omero_file
+      locks: []
       logo: ome.png
+      optimistics: []
+    locks: []
     requirements:
-    - description: An instance of ArkitektNext Datalayer to make requests to the user's
-        data
-      key: datalayer
-      optional: true
-      service: live.arkitekt.s3
-    - description: An instance of ArkitektNext Lok to authenticate the user
-      key: lok
-      optional: false
-      service: live.arkitekt.lok
     - description: An instance of ArkitektNext Mikro to make requests to the user's
         data
       key: mikro
-      optional: true
+      optional: false
       service: live.arkitekt.mikro
     - description: An instance of ArkitektNext Rekuest to assign to actions
       key: rekuest
       optional: false
       service: live.arkitekt.rekuest
-    size: 1661842684
+    - description: An instance of ArkitektNext Rekuest to assign to actions
+      key: s3
+      optional: false
+      service: live.arkitekt.s3
+    size: 1669059373
+    states: []
   manifest:
     author: jhnnsrs
-    entrypoint: app
     identifier: ome
     scopes:
     - read
     version: 0.4.0
   selectors: []
-latest_build_run: 5dc76f4a-cf74-4c43-a61f-7866607a12d8
+latest_build_run: 57efec4e-1bd6-4481-932a-cecefceb90a8
