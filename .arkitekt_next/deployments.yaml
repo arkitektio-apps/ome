@@ -1,10 +1,11 @@
 app_images:
-- appImageId: 0dc50cb428bf406ba0f370e647e4fc6c
+- appImageId: ed82684dd36a4302983ac104269d5d76
   flavourName: vanilla
   image:
-    buildAt: '2026-04-14T15:06:33.309655'
+    buildAt: '2026-06-30T08:46:32.300091'
     imageString: jhnnsrs/ome:0.4.0-vanilla
   inspection:
+    bloks: []
     implementations:
     - definition:
         args:
@@ -16,10 +17,10 @@ app_images:
           validators: []
           widget:
             kind: SEARCH
-            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
+            query: "query SearchFiles($search: String, $values: [ID!], $limit: Int,\
+              \ $offset: Int = 0) {\n  options: files(\n    filters: {search: $search,\
+              \ ids: $values}\n    pagination: {limit: $limit, offset: $offset}\n\
+              \  ) {\n    value: id\n    label: name\n    __typename\n  }\n}"
             ward: mikro
         - effects: []
           identifier: '@mikro/stage'
@@ -29,10 +30,10 @@ app_images:
           validators: []
           widget:
             kind: SEARCH
-            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
+            query: "query SearchStages($search: String, $values: [ID!], $limit: Int,\
+              \ $offset: Int = 0) {\n  options: stages(\n    filters: {search: $search,\
+              \ ids: $values}\n    pagination: {limit: $limit, offset: $offset}\n\
+              \  ) {\n    value: id\n    label: name\n    __typename\n  }\n}"
             ward: mikro
         collections: []
         description: No Description
@@ -51,14 +52,17 @@ app_images:
           kind: STRUCTURE
           nullable: false
           validators: []
-        stateful: true
+        stateful: false
         version: '1'
       dependencies: []
       dynamic: false
       interface: convert_omero_file
       locks: []
       logo: ome.png
+      manipulates: []
+      needsToken: true
       optimistics: []
+      tracks: []
     locks: []
     requirements:
     - description: An instance of ArkitektNext Mikro to make requests to the user's
@@ -74,7 +78,7 @@ app_images:
       key: s3
       optional: false
       service: live.arkitekt.s3
-    size: 1669059373
+    size: 1669800779
     states: []
   manifest:
     author: jhnnsrs
@@ -83,4 +87,4 @@ app_images:
     - read
     version: 0.4.0
   selectors: []
-latest_app_image: 0dc50cb428bf406ba0f370e647e4fc6c
+latest_app_image: ed82684dd36a4302983ac104269d5d76

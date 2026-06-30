@@ -1,9 +1,10 @@
 builds:
-- build_id: 2984cc0f-3afa-44fa-b85f-ac1abdad7589
-  build_run: 57efec4e-1bd6-4481-932a-cecefceb90a8
+- build_id: adc812f8-3238-4d00-8c9b-f0b09ff0afe5
+  build_run: afbc5a33-91b7-4aae-a4d0-7b8a10f3f767
   description: This is a vanilla flavour
   flavour: vanilla
   inspection:
+    bloks: []
     implementations:
     - definition:
         args:
@@ -15,10 +16,10 @@ builds:
           validators: []
           widget:
             kind: SEARCH
-            query: "query SearchFiles($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: files(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
+            query: "query SearchFiles($search: String, $values: [ID!], $limit: Int,\
+              \ $offset: Int = 0) {\n  options: files(\n    filters: {search: $search,\
+              \ ids: $values}\n    pagination: {limit: $limit, offset: $offset}\n\
+              \  ) {\n    value: id\n    label: name\n    __typename\n  }\n}"
             ward: mikro
         - effects: []
           identifier: '@mikro/stage'
@@ -28,10 +29,10 @@ builds:
           validators: []
           widget:
             kind: SEARCH
-            query: "query SearchStages($search: String, $values: [ID!], $pagination:\
-              \ OffsetPaginationInput) {\n  options: stages(\n    filters: {search:\
-              \ $search, ids: $values}\n    pagination: $pagination\n  ) {\n    value:\
-              \ id\n    label: name\n    __typename\n  }\n}"
+            query: "query SearchStages($search: String, $values: [ID!], $limit: Int,\
+              \ $offset: Int = 0) {\n  options: stages(\n    filters: {search: $search,\
+              \ ids: $values}\n    pagination: {limit: $limit, offset: $offset}\n\
+              \  ) {\n    value: id\n    label: name\n    __typename\n  }\n}"
             ward: mikro
         collections: []
         description: No Description
@@ -50,14 +51,17 @@ builds:
           kind: STRUCTURE
           nullable: false
           validators: []
-        stateful: true
+        stateful: false
         version: '1'
       dependencies: []
       dynamic: false
       interface: convert_omero_file
       locks: []
       logo: ome.png
+      manipulates: []
+      needsToken: true
       optimistics: []
+      tracks: []
     locks: []
     requirements:
     - description: An instance of ArkitektNext Mikro to make requests to the user's
@@ -73,7 +77,7 @@ builds:
       key: s3
       optional: false
       service: live.arkitekt.s3
-    size: 1669059373
+    size: 1669800779
     states: []
   manifest:
     author: jhnnsrs
@@ -82,4 +86,4 @@ builds:
     - read
     version: 0.4.0
   selectors: []
-latest_build_run: 57efec4e-1bd6-4481-932a-cecefceb90a8
+latest_build_run: afbc5a33-91b7-4aae-a4d0-7b8a10f3f767
