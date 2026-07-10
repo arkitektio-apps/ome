@@ -29,7 +29,7 @@ from scyjava import config
 from bioio import BioImage
 import numpy as np
 from ome_types.model import UnitsLength, Channel as OmeChannel, Image as OmeImage, OME
-
+from uuid import uuid4
 logger = logging.getLogger(__name__)
 x = config
 
@@ -133,7 +133,7 @@ def create_light_graph(
             manufacturer=laser.manufacturer,
             model=laser.model,
             label=f"{laser.manufacturer} {laser.model} {laser.wavelength}",
-            nominal_wavelength_nm=laser.wavelength,
+            nominal_wavelength=str(laser.wavelength) + " nm" if laser.wavelength is not None else None,
             ports=[
                 LightPortInput(
                     id="out", name="Light Out", role=PortRole.OUTPUT, channel=ChannelKind.FREE_SPACE
@@ -150,7 +150,7 @@ def create_light_graph(
             numericalAperture=objective.lens_na,
             manufacturer=objective.manufacturer,
             model=objective.model,
-            workingDistanceMm=objective.working_distance,
+            workingDistance=str(objective.working_distance) + " mm" if objective.working_distance is not None else None,
             ports=[
                 LightPortInput(
                     id="in", name="Light In", role=PortRole.INPUT, channel=ChannelKind.FREE_SPACE
@@ -204,7 +204,7 @@ def create_light_graph(
         pinhole = OpticalElementInput(
             id="pinhole",
             kind=ElementKind.PINHOLE,
-            diameterUm=channel.pinhole_size,
+            diameter=str(channel.pinhole_size) + " μm" if channel.pinhole_size is not None else None,
             label="A pinhole",
             ports=[
                 LightPortInput(id="in", name="Light In", role=PortRole.INPUT, channel=ChannelKind.FREE_SPACE),
